@@ -118,14 +118,14 @@ T3 = opti.variable(1,N);     T4 = opti.variable(1,N);
 T5 = opti.variable(1,N);
 
 % Set bounds on joint positions.
-opti.subject_to(-pi/2 < q1 < pi/2);
-opti.subject_to(-pi/2 < q2 < pi/2);
-opti.subject_to(-pi/3 < q3 < pi/3);
-opti.subject_to(-pi/2 < q4 < pi/2);
-opti.subject_to(-pi/2 < q5 < pi/2);
+opti.subject_to(-pi/2 <= q1 <= pi/2);
+opti.subject_to(-pi/2 <= q2 <= pi/2);
+opti.subject_to(-pi/3 <= q3 <= pi/3);
+opti.subject_to(-pi/2 <= q4 <= pi/2);
+opti.subject_to(-pi/2 <= q5 <= pi/2);
 % Set physiological joint limits.
-opti.subject_to(-pi < q1 - q2 < 0); % Knee joint limit (no hyperflexion).
-opti.subject_to(-pi < q5 - q4 < 0); % Knee joint limit (no hyperflexion).
+opti.subject_to(-pi <= q1 - q2 <= 0); % Knee joint limit (no hyperflexion).
+opti.subject_to(-pi <= q5 - q4 <= 0); % Knee joint limit (no hyperflexion).
 
 % Set naive initial guess for the joint positions
 % (linearly spaced vector between lower and upper bounds).
