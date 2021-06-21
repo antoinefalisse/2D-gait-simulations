@@ -1,17 +1,17 @@
-# 2D-gait
-Generate optimal torque driven 2-D gait simulations in below 5s using direct collocation.
+# ISB2021 workshop on optimal control 
+=====================================
 
-NOTE: Running the code requires installation of CasADi (https://web.casadi.org/).
+Welcome to this workshop on optimal control. The hands-on part of this workshop will demonstrate how to generate a predictive simulation of walking with a planar five-link biped model. To this aim, we will deeply rely on the walking example from the following paper: "An Introduction to Trajectory Optimization: How to Do Your Own Direct Collocation" by Matthew Kelly. (SIAM Review, Vol. 59, No. 4, pp. 849-904).
 
-- The model is based on the one presented in "An Introduction to Trajectory Optimization: How to Do Your Own Direct Collocation" by Matthew Kelly. (SIAM Review, Vol. 59, No. 4, pp. 849-904)
-- The model exists of 5 segments (2 tibia, 2 femur and trunk) and driven by ankle, knee and hip torques.
-The stance 'foot' is fixed to the ground and the gait pattern is imposed to have no double stance and no flight phase avoiding the implementation of different phases and/or contact models.
+The model we will use consists of 5 segments (tibias, femurs, and torso) and is driven by ankle, knee, and hip torques. The *stance foot* is fixed to the ground and the gait pattern is imposed to have no double stance and no flight phase. This deeply simplifies the problem as there is then no need for contact models or different equations for different phases of the gait cycle. 
 
-- We use CasADi to generate and solve an NLP from our collocation simulation. We don't need to provide analytic gradients of our constraints or cost function as CasADi does this for us using automatic differentiation.
+The predictive simulation will be formulated as a trajectory optimization problem and solved using a direct collocation method. The goal of the problem will be to find the model states and controls that satisfy the model's dynamics while minimizing a cost function such as the sum of squared joint torques. You will be invited to test different cost functions, add some constraints, and adjust some variables so as to produce a variety of gait patterns. The aim is to demonstrate the potential of optimal control to address neuro-mechanical research questions.
 
-- If you run the 'main' function you will see how the minimial torque walking pattern looks like. There are some options to restrict the gait pattern and look at the effects of for example ('walking without knee muscles'). You can uncomment these and run to observe the effects. The optimization to generate the gait pattern should take between 1s-2s depending on the performance of your computer.
+The example is available in MATLAB and Python, so feel free to select whatever tool you prefer. The only pre-requisite in both cases is to install [CasADi](https://web.casadi.org/get/). CasADi is an open-source tool for nonlinear optimization and algorithmic differentiation that we use for solving the problem.
 
-- The functions to generate the equations of motion and heel-strike map constraint (to have a consistent periodic gait) are included ('generateEOM.m'). 
+The problem should solve in only a couple of seconds on a standard laptop computer, which is great for testing the effect of different parameters and modeling choices on the resulting gait pattern.
 
-- The integration scheme is implemented as a backward Euler scheme:: x_k+1 = x_k + f(x_k+1)dt with f(x) = xdot.
-
+If you have any questions, please feel free to contact us:
+- Antoine Falisse: afalisse@stanford.edu
+- Gil Serrancoli: gil.serrancoli@upc.edu
+- Friedl De Groote: friedl.degroote@kuleuven.be
