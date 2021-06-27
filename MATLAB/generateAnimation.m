@@ -22,14 +22,6 @@ for j=1:size(P,1)
     H2.XData=Px2(j,:);
     H2.YData=Py2(j,:);    
     pause(dt)
-    if mod(j,4) == 0 || j ==1 
-        scatter(Px1(j,1),Py1(j,1),1,'b');
-        scatter(Px1(j,2),Py1(j,2),1,'b');
-        scatter(Px1(j,4),Py1(j,4),1,'g');
-        scatter(Px2(j,1),Py2(j,1),1,'g');
-        scatter(Px2(j,2),Py2(j,2),1,'r');
-        scatter(Px2(j,3),Py2(j,3),1,'r');
-    end
 end
 Px1 = Px1 + strideLength;
 Px2 = Px2 + strideLength;

@@ -23,6 +23,7 @@ from getJointKinematics import getJointPositions
 from getJointKinematics import getJointVelocities
 from getJointKinematics import getRelativeJointPositions
 from getJointKinematics import getRelativeJointVelocities
+from generateAnimation import generateAnimation
 
 # %% Selection of walking patterns.
 '''
@@ -409,6 +410,7 @@ plt.xlabel('Time [s]')
 plt.ylabel('Torque [Nm]')
 plt.legend(iter(lineObjects), ('stance ankle','stance knee','stance hip',
                                'swing hip','swing knee'))
+plt.show()
 
 # Relative joint positions.
 relJointPos = getRelativeJointPositions(
@@ -424,6 +426,7 @@ plt.xlabel('Time [s]')
 plt.ylabel('Segment position [°]')
 plt.legend(iter(lineObjects), ('stance ankle','stance knee','stance hip',
                                'swing hip','swing knee'))
+plt.show()
 
 # Relative joint velocities.
 relJointVel = getRelativeJointVelocities(
@@ -439,6 +442,7 @@ plt.xlabel('Time [s]')
 plt.ylabel('Segment velocity [°/s]')
 plt.legend(iter(lineObjects), ('stance ankle','stance knee','stance hip',
                                'swing hip','swing knee'))
+plt.show()
 
 # %% Analysis of the cost function.
 J_torque = (casadi.sumsqr(T1_opt).full() + casadi.sumsqr(T2_opt).full() + 
@@ -453,7 +457,8 @@ J_torque_cont = np.round(J_torque / J_tot * 100, 2)[0][0]
 print('The joint torque term contributes for {}% of the optimal cost value\
       '.format(J_torque_cont))
 
-# # %% Generate an animation.
-# # jointPositions_opt = getJointPositions(...
-# #     l1,l2,l3,l4,l5,q1_opt,q2_opt,q3_opt,q4_opt,q5_opt)'
-# # generateAnimation(jointPositions_opt, dt, strideLength)
+# %% Generate an animation.
+jointPositions_opt = getJointPositions(
+    l1,l2,l3,l4,l5,
+    q1_opt,q2_opt,q3_opt,q4_opt,q5_opt)
+anim = generateAnimation(jointPositions_opt, dt, strideLength)
