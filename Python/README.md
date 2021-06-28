@@ -5,11 +5,11 @@ Python version of the example.
 - Open an anaconda prompt.
 - CD into the Python folder: `cd <my_directory>/ISB21-workshop/Python` where `<my_directory>` is the path to the folder where `ISB21-workshop` is located.
 - (Optional depending on your conda environment) Install `pip` in your conda environment: `conda install pip`.
-- Install the required packages: `python -m pip install -r requirements.txt`
+- Install the required packages: `python -m pip install -r requirements.txt`.
 
 # Run the code:
-- Option 1: You can run the code using a single command line: `python main.py`. You need to close the figures to get the script to keep running.
-- Option 2: You can run the code in your favorite IDE such as spyder. To launch spyder from the command line, type `spyder` in the anaconda prompt. You can then run `main.py`.
+- Option 1: You can run the code using the following command line: `python main.py`. Note that you need to close the figures to get the script to keep running.
+- Option 2: You can run the code in your favorite IDE such as spyder. To launch spyder from the command line, type `spyder` in the anaconda prompt. You can then run `main.py`. Note that you might need to install spyder beforehand using for instance `pip install spyder`.
 - Option 3: You can also use the Jupyter notebook version of the code. To open the notebook from the command line, type  `ipython notebook main.ipynb` in the anaconda prompt. Note that getting the animation to play properly might require you to install [FFmpeg](https://www.ffmpeg.org/). 
 
 # Brief file description:
