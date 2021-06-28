@@ -13,7 +13,7 @@
 '''
 
 import numpy as np
-import casadi
+import casadi as ca
 import matplotlib.pyplot as plt
 
 from getDynamicConstraintErrors import getDynamicConstraintErrors
@@ -123,7 +123,7 @@ More info here: https://web.casadi.org/docs/#document-opti
 '''
 
 # Create opti instance.
-opti = casadi.Opti()
+opti = ca.Opti()
 
 # Create optimization variables.
 # Joint positions.
@@ -230,7 +230,7 @@ heelStrike_error = getHeelStrikeError(
     m1,m2,m3,m4,m5,
     q1_min,q2_min,q3_min,q4_min,q5_min,
     q1_plus,q2_plus,q3_plus,q4_plus,q5_plus)
-opti.subject_to(casadi.vertcat(*heelStrike_error) == 0)
+opti.subject_to(ca.vertcat(*heelStrike_error) == 0)
 
 # Initialize the cost function (J).
 J = 0
@@ -277,13 +277,13 @@ for k in range(N):
     dq5k_plus = dq5[:,k+1]
        
     # Stack states at mesh points k and k+1.    
-    Xk = casadi.vertcat(q1k, q2k, q3k, q4k, q5k,   
+    Xk = ca.vertcat(q1k, q2k, q3k, q4k, q5k,   
           dq1k, dq2k, dq3k, dq4k, dq5k)
-    Xk_plus = casadi.vertcat(q1k_plus, q2k_plus, q3k_plus, q4k_plus, q5k_plus,
+    Xk_plus = ca.vertcat(q1k_plus, q2k_plus, q3k_plus, q4k_plus, q5k_plus,
                dq1k_plus, dq2k_plus, dq3k_plus, dq4k_plus, dq5k_plus)
     
     # Stack state derivatives.
-    Uk = casadi.vertcat(dq1k_plus, dq2k_plus, dq3k_plus, dq4k_plus, dq5k_plus, 
+    Uk = ca.vertcat(dq1k_plus, dq2k_plus, dq3k_plus, dq4k_plus, dq5k_plus, 
           ddq1k, ddq2k, ddq3k, ddq4k, ddq5k)
     
     # Integration.
@@ -295,7 +295,7 @@ for k in range(N):
         ddq1k,ddq2k,ddq3k,ddq4k,ddq5k,
         dq1k_plus,dq2k_plus,dq3k_plus,dq4k_plus,dq5k_plus,
         q1k_plus,q2k_plus,q3k_plus,q4k_plus,q5k_plus)
-    opti.subject_to(casadi.vertcat(*dynamicConstraintErrors) == 0)
+    opti.subject_to(ca.vertcat(*dynamicConstraintErrors) == 0)
     
     # Cost function contributions.
     # Minimize the sum of the squared joint torques.
@@ -445,12 +445,12 @@ plt.legend(iter(lineObjects), ('stance ankle','stance knee','stance hip',
 plt.show()
 
 # %% Analysis of the cost function.
-J_torque = (casadi.sumsqr(T1_opt).full() + casadi.sumsqr(T2_opt).full() + 
-            casadi.sumsqr(T3_opt).full() + casadi.sumsqr(T4_opt).full() + 
-            casadi.sumsqr(T5_opt).full())*dt
-J_ddq = 0.1*(casadi.sumsqr(ddq1_opt).full() + casadi.sumsqr(ddq2_opt).full() + 
-             casadi.sumsqr(ddq3_opt).full() + casadi.sumsqr(ddq4_opt).full() + 
-             casadi.sumsqr(ddq5_opt).full())*dt
+J_torque = (ca.sumsqr(T1_opt).full() + ca.sumsqr(T2_opt).full() + 
+            ca.sumsqr(T3_opt).full() + ca.sumsqr(T4_opt).full() + 
+            ca.sumsqr(T5_opt).full())*dt
+J_ddq = 0.1*(ca.sumsqr(ddq1_opt).full() + ca.sumsqr(ddq2_opt).full() + 
+             ca.sumsqr(ddq3_opt).full() + ca.sumsqr(ddq4_opt).full() + 
+             ca.sumsqr(ddq5_opt).full())*dt
 J_tot = J_torque + J_ddq
 J_torque_cont = np.round(J_torque / J_tot * 100, 2)[0][0]
 
@@ -461,4 +461,4 @@ print('The joint torque term contributes for {}% of the optimal cost value\
 jointPositions_opt = getJointPositions(
     l1,l2,l3,l4,l5,
     q1_opt,q2_opt,q3_opt,q4_opt,q5_opt)
-anim = generateAnimation(jointPositions_opt, dt, strideLength)
+animation = generateAnimation(jointPositions_opt, dt, strideLength)
