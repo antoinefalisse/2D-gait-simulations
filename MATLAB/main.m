@@ -5,7 +5,7 @@ clear; close all; clc;
 % biped model. A direct collocation method with a backward Euler
 % integration scheme is employed to formulate a nonlinear programming
 % problem (NLP) from the continuous optimization problem. The formulation
-% is deeply inspired from the five-link biped model described in: "Kelly,
+% is deeply inspired from the five-link biped example described in: "Kelly,
 % An Introduction to Trajectory Optimization: How to Do Your Own Direct
 % Collocation (2017), SIAM REVIEW. DOI. 10.1137/16M1062569".
 %
@@ -30,6 +30,14 @@ import casadi.*
 selected_gait = 'nominal';
 
 %% Model
+
+% The model consists of a torso connected to two legs, each of which has 
+% an upper and a lower link. The stance leg is supporting the weight of the
+% model, while the swing leg is free to move above the ground. Each link is
+% modeled as a rigid body, with both mass and rotational inertia. Links are
+% connected to each other with ideal torque motors across frictionless
+% revolute joints, with the exception of the ankle joint, which is passive.
+
 % Physical parameters for the five-link biped model.
 % Table 4 from appendix E.2, p897 of Kelly 2017.
 % -------------------------------------------------------------------------
@@ -52,21 +60,26 @@ selected_gait = 'nominal';
 % d3        0.2 m         distance from torso center of mass to hip
 % -------------------------------------------------------------------------
 
+% Mass of the segments
 m1 = 3.2; m5 = 3.2;
 m2 = 6.8; m4 = 6.8;
 m3 = 20;
+% Rotational inertia of the segments
 I1 = 0.93; I5 = 0.93;
 I2 = 1.08; I4 = 1.08;
 I3 = 2.22;
+% Length of the segments
 l1 = 0.4; l5 = 0.4;
 l2 = 0.4; l4 = 0.4;
 l3 = 0.625;
+% Distance from segment center of mass to parent joint
 d1 = 0.128; d5 = 0.128;
 d2 = 0.163; d4 = 0.163;
 d3 = 0.2;
-lc1 = l1 - 0.128; lc5 = lc1;
-lc2 = l2-0.163; lc4 = lc2;
-lc3 = 0.2;
+
+lc1 = l1 - d1; lc5 = l5 - d5;
+lc2 = l2 - d2; lc4 = l4 - d4;
+lc3 = d3;
 
 if strcmp(selected_gait, 'on_the_moon')
     g = 1.62;

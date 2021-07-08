@@ -9,13 +9,9 @@
 
 %% Equations of motion.
 disp('Calculating the equations of motion symbolically...')
-% q1-5: angles.
+% q1-5: positions.
 % dq1-5: velocities.
 % ddq1-5: accelerations.
-% Note about angle definitions:
-% The angles are the positive angles with respect to the direction of the
-% previous segment. For the first angle - this is the positive angle with
-% respect to the y-axis.
 syms q1 q2 q3 q4 q5 dq1 dq2 dq3 dq4 dq5 ddq1 ddq2 ddq3 ddq4 ddq5 x dx ddx y dy ddy T1 T2 T3 T4 T5  'real'; 
 syms q1_plus q2_plus q3_plus q4_plus q5_plus dq1_plus dq2_plus dq3_plus dq4_plus dq5_plus;
 syms q1_min q2_min q3_min q4_min q5_min dq1_min dq2_min dq3_min dq4_min dq5_min;
@@ -65,11 +61,11 @@ dG_3 = jacobian(G_3,q)*dq; dG_4 = jacobian(G_4,q)*dq;
 dG_5 = jacobian(G_5,q)*dq; 
 
 % Get accelerations.
-ddP_1 = jacobian(dP_1,[q;dq])*[dq; ddq];
-ddP_2 = jacobian(dP_2,[q;dq])*[dq; ddq]; 
-ddP_3 = jacobian(dP_3,[q;dq])*[dq; ddq]; 
-ddP_4 = jacobian(dP_4,[q;dq])*[dq; ddq]; 
-ddP_5 = jacobian(dP_5,[q;dq])*[dq; ddq];
+% ddP_1 = jacobian(dP_1,[q;dq])*[dq; ddq];
+% ddP_2 = jacobian(dP_2,[q;dq])*[dq; ddq]; 
+% ddP_3 = jacobian(dP_3,[q;dq])*[dq; ddq]; 
+% ddP_4 = jacobian(dP_4,[q;dq])*[dq; ddq]; 
+% ddP_5 = jacobian(dP_5,[q;dq])*[dq; ddq];
 
 ddG_1 = jacobian(dG_1,[q;dq])*[dq; ddq]; 
 ddG_2 = jacobian(dG_2,[q;dq])*[dq; ddq]; 
