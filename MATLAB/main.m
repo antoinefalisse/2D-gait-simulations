@@ -434,14 +434,23 @@ legend('stance ankle','stance knee','stance hip','swing hip','swing knee');
 xlabel('Time')
 ylabel('Segment velocity [°/s]')
 
-%% Total torque.
-% TODO: not sure that is what we want them play with.
-tot_torque = sum(abs(T1_opt)) + sum(abs(T2_opt)) + sum(abs(T3_opt)) + ...
-    sum(abs(T4_opt)) + sum(abs(T5_opt));
+%% Maximum torque.
+max_torque=max(abs([T1_opt T2_opt T3_opt T4_opt T5_opt]));
 
-disp(['The total torque is ', num2str(tot_torque), ' Nm. Try to make it'...
+disp(['The maximum torque is ', num2str(max_torque), ' Nm. Try to make it'...
       ' lower by playing with the weights.'])
 
+%Send Value to spreadsheet
+name=input('What is your name?','s');
+datainput{1}=name;
+datainput{2}=max_torque;
+datainput{3}=w1;
+datainput{4}=w2;
+datainput{5}=w3;
+datainput{6}=w4;
+datainput{7}=w5;
+mat2sheets_v2('1LkQjvf8GK8CTqohY5sC50KnL9j36aRI2fBmuBAsj-Mw', '0', [1 1], datainput);  
+  
 %% Generate an animation.
 jointPositions_opt = getJointPositions(...
     l1,l2,l3,l4,l5,q1_opt,q2_opt,q3_opt,q4_opt,q5_opt)';
