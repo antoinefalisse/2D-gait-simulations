@@ -40,7 +40,7 @@ Options:
   - on_the_moon
 '''
 
-selected_gait = 'nominal'
+selected_gait = 'no_ankle_torque'
 
 # %% Model
 '''
