@@ -16,7 +16,7 @@ clear; close all; clc;
 
 import casadi.*
 
-%% Selection of walking pattern and weight of cost function terms.
+%% Selection of walking pattern and weight of the cost function terms.
 % Options:
 %   - nominal
 %   - no_stance_ankle_torque
@@ -52,7 +52,7 @@ w5 = 1; % swing knee
 % modeled as a rigid body, with both mass and rotational inertia. Links are
 % connected to each other with ideal torque motors across frictionless
 % revolute joints. In contrast with the model from the paper, the stance
-% ankle is not passive (i.e., the torque is not null). (TODO: confirm)
+% ankle is not passive (i.e., the torque is not null).
 
 % Physical parameters for the five-link biped model.
 % Table 4 from appendix E.2, p897 of Kelly 2017.
@@ -101,27 +101,29 @@ else
     g = 9.81;
 end
 
-% (TODO name: are those really named dynamic constraints?)
 % For the sake of simplicty, we generated the equations of motion of the
-% model for you (see how we proceeded in generateSymbolicFunctions.m).
-% Here, we create a CasADi function that returns the dynamic constraint
+% model for you (see how we proceeded in generateSymbolicFunctions.m). For
+% the simulation to be dynamically consistent, we want those equations of
+% motion to be enforced. In pratice, we do that by having path constraints
+% in the problem formulation.
+% Here, we create a CasADi function that returns the 'model' constraint
 % errors based on the model states (q, dq) and controls (ddq, T). This
 % function is initialized based on the physical parameters of the model,
 % such that if you change those parameters, the equations of motion are
-% updated. During the actual optimization, we will impose the dynamic
-% contraint errors to be null. Note that you can change the physical
-% parameters of the model, but not for instance add a segment. This would
-% make current dynamics invalid.
+% updated. During the actual optimization, we will impose the contraint
+% errors to be null. Note that you can change physical parameters of
+% the model (e.g. mass or length), but not for instance add a segment. 
+% This would make the equations of motions we generated invalid.
 %
-% f_getDynamicConstraintErrors:
+% f_getModelConstraintErrors:
 % Inputs:
 %   - states: joint positions q (5x1)
 %   - states: joint velocities dq (5x1)
 %   - controls: joint accelerations ddq (5x1)
 %   - controls: joint torques T (5x1)
 % Outputs:
-%   - dynamic contraint errors (5x1)
-f_getDynamicConstraintErrors = getDynamicConstraintErrors(...
+%   - contraint errors (5x1)
+f_getModelConstraintErrors = getModelConstraintErrors(...
     m1, m2, m3, m4, m5, ...
     I1, I2, I3, I4, I5, ...
     d1, d2, d3, d4, d5, ...
@@ -135,7 +137,7 @@ f_getDynamicConstraintErrors = getDynamicConstraintErrors(...
 % cost of higher computational time. In practice, if your solution changes
 % when lowering the mesh size, it suggests that your current mesh size is 
 % not low enough. It is advised to do such type of convergence analysis 
-% to make sure you don't over-interpret the results.
+% to make sure you do not misinterpret the results.
 strideTime = 0.8;           % Stride time (s).
 strideLength = 0.5;         % Stride length (m).
 dt = 0.01;                  % Mesh size (s).
@@ -153,16 +155,16 @@ opti = casadi.Opti();
 
 % Create design variables.
 % States.
-% Joint positions.
+% Segment angles.
 q1 = opti.variable(1,N+1);   q2 = opti.variable(1,N+1);   
 q3 = opti.variable(1,N+1);   q4 = opti.variable(1,N+1);   
 q5 = opti.variable(1,N+1);
-% Joint velocities.
+% Segment angular velocities.
 dq1 = opti.variable(1,N+1);  dq2 = opti.variable(1,N+1);  
 dq3 = opti.variable(1,N+1);  dq4 = opti.variable(1,N+1);  
 dq5 = opti.variable(1,N+1);
 % Controls.
-% Joint accelerations.
+% Segment angular accelerations.
 ddq1 = opti.variable(1,N);   ddq2 = opti.variable(1,N);   
 ddq3 = opti.variable(1,N);   ddq4 = opti.variable(1,N);   
 ddq5 = opti.variable(1,N);
@@ -171,7 +173,7 @@ T1 = opti.variable(1,N);     T2 = opti.variable(1,N);
 T3 = opti.variable(1,N);     T4 = opti.variable(1,N);     
 T5 = opti.variable(1,N);
 
-% Set bounds on joint positions (if not otherwise specified, design
+% Set bounds on segment angles (if not otherwise specified, design
 % variables will be bounded between +/- Inf).
 opti.subject_to(-pi/2 <= q1 <= pi/2);
 opti.subject_to(-pi/2 <= q2 <= pi/2);
@@ -182,7 +184,7 @@ opti.subject_to(-pi/2 <= q5 <= pi/2);
 opti.subject_to(-pi <= q1 - q2 <= 0); % Knee joint limit (no hyperflexion).
 opti.subject_to(-pi <= q5 - q4 <= 0); % Knee joint limit (no hyperflexion).
 
-% Set naive initial guess for the joint positions.
+% Set naive initial guess for the segment angles.
 % (linearly spaced vector between lower and upper bounds).
 % When no initial guess is provided, numerical zero is assumed.
 q1_init = -pi/8;    q1_final = -pi/6;   
@@ -207,15 +209,15 @@ J = 0;
 % Loop over mesh points.
 for k=1:N
     % States at mesh point k.
-    % Joint positions.
+    % Segment angles.
     q1k = q1(:,k);     q2k = q2(:,k);     q3k = q3(:,k);
     q4k = q4(:,k);     q5k = q5(:,k);
-    % Joint velocities.
+    % Segment angular velocities.
     dq1k = dq1(:,k);   dq2k = dq2(:,k);   dq3k = dq3(:,k);
     dq4k = dq4(:,k);   dq5k = dq5(:,k);
     
     % Controls at mesh point k.
-    % Joint accelerations.
+    % Segment angular accelerations.
     ddq1k = ddq1(:,k); ddq2k = ddq2(:,k); ddq3k = ddq3(:,k); 
     ddq4k = ddq4(:,k); ddq5k = ddq5(:,k);
     % Joint torques.
@@ -223,11 +225,11 @@ for k=1:N
     T4k = T4(:,k);     T5k = T5(:,k);
     
     % States at mesh point k+1.
-    % Joint positions.
+    % Segment angles.
     q1k_plus = q1(:,k+1);     q2k_plus = q2(:,k+1);     
     q3k_plus = q3(:,k+1);     q4k_plus = q4(:,k+1);     
     q5k_plus = q5(:,k+1);
-    % Joint velocities.
+    % Segment angular velocities.
     dq1k_plus = dq1(:,k+1);   dq2k_plus = dq2(:,k+1);   
     dq3k_plus = dq3(:,k+1);   dq4k_plus = dq4(:,k+1);   
     dq5k_plus = dq5(:,k+1);
@@ -242,33 +244,33 @@ for k=1:N
     Uk = [dq1k_plus; dq2k_plus; dq3k_plus; dq4k_plus; dq5k_plus; ...
           ddq1k; ddq2k; ddq3k; ddq4k; ddq5k];
     
-    % Implicit dynamics constraints error (TODO name).
+    % Implicit dynamic constraints error.
     % The function eulerIntegrator returns the error in the dynamics.
-    % We impose this error to be null (i.e., xdot - dxdt = 0).
-    % The integration is performed using a backward Euler scheme (see
-    % eulerIntegrator.m)
+    % We impose this error to be null (i.e., dq - dqdt = 0; 
+    % ddq - ddqdt = 0).  The integration is performed using a backward
+    % Euler scheme (see eulerIntegrator.m)
     opti.subject_to(eulerIntegrator(Xk, Xk_plus, Uk, dt) == 0);
        
-    % Dynamic constraints error (TODO name).
+    % Model constraints error.
     % We impose this error to be null (i.e., f(q, dq, ddq, T) = 0).
-    dynamicConstraintErrors = f_getDynamicConstraintErrors(...
+    modelConstraintErrors = f_getModelConstraintErrors(...
         q1k_plus,q2k_plus,q3k_plus,q4k_plus,q5k_plus,...
         dq1k_plus,dq2k_plus,dq3k_plus,dq4k_plus,dq5k_plus,...
         ddq1k,ddq2k,ddq3k,ddq4k,ddq5k,...
         T1k,T2k,T3k,T4k,T5k);
-    opti.subject_to(dynamicConstraintErrors == 0);
+    opti.subject_to(modelConstraintErrors == 0);
     
     % Cost function.
     % Minimize the weighted sum of the squared joint torques.
     J = J + (w1*T1k.^2 + w2*T2k.^2 + w3*T3k.^2 + w4*T4k.^2 + w5*T5k.^2)*dt;
-    % Penalize (with low weight) joint accelerations for regularization.
+    % Penalize (with low weight) segment angular accelerations for
+    % regularization purposes.
     J = J + 1e-1*(ddq1k.^2 + ddq2k.^2 + ddq3k.^2 + ddq4k.^2 + ddq5k.^2)*dt;
     
     % Impose the swing foot to be off the ground.
-    % getJointPositions returns the positions in the x-y plane in the
+    % getJointPositions returns 'joint' positions in the x-y plane in the
     % following order: stance knee (X-Y), pelvis (X-Y), head (X-Y), 
     % swing knee (X-Y), and swing foot (X-Y).
-    % TODO: confirm.
     jointPositions = getJointPositions(l1,l2,l3,l4,l5,q1k,q2k,q3k,q4k,q5k);
     opti.subject_to(jointPositions(10) > -1e-4);
     
@@ -371,19 +373,19 @@ opti.solver('ipopt');
 sol = opti.solve();
 
 %% Extract the optimal design variables.
-% Optimal joint positions.
+% Optimal segment angles.
 q1_opt = sol.value(q1);
 q2_opt = sol.value(q2);
 q3_opt = sol.value(q3);
 q4_opt = sol.value(q4);
 q5_opt = sol.value(q5);
-% Optimal joint velocities.
+% Optimal segment angular velocities.
 dq1_opt = sol.value(dq1);
 dq2_opt = sol.value(dq2);
 dq3_opt = sol.value(dq3);
 dq4_opt = sol.value(dq4);
 dq5_opt = sol.value(dq5);
-% Optimal joint accelerations.
+% Optimal segment angular accelerations.
 ddq1_opt = sol.value(ddq1);
 ddq2_opt = sol.value(ddq2);
 ddq3_opt = sol.value(ddq3);
@@ -396,6 +398,11 @@ T3_opt = sol.value(T3);
 T4_opt = sol.value(T4);
 T5_opt = sol.value(T5);
 
+%% Generate an animation.
+jointPositions_opt = getJointPositions(...
+    l1,l2,l3,l4,l5,q1_opt,q2_opt,q3_opt,q4_opt,q5_opt)';
+generateAnimation(jointPositions_opt, dt, strideLength);
+
 %% Plots.
 % Joint torques.
 figure()
@@ -406,10 +413,10 @@ plot(time(1:end-1),T1_opt,...
      time(1:end-1),T5_opt);
 legend('stance ankle','stance knee','stance hip','swing hip','swing knee');
 xlabel('Time [s]')
-ylabel('Torque [Nm]')
+ylabel('Joint torques [Nm]')
 
-% Relative joint positions.
-relJointPos = getRelativeJointPositions(...
+% Relative joint angles.
+relJointPos = getRelativeJointAngles(...
     q1_opt,q2_opt,q3_opt,q4_opt,q5_opt);
 figure()
 plot(time,180/pi*relJointPos(1,:),...
@@ -419,10 +426,10 @@ plot(time,180/pi*relJointPos(1,:),...
      time,180/pi*relJointPos(5,:));
 legend('stance ankle','stance knee','stance hip','swing hip','swing knee');
 xlabel('Time [s]')
-ylabel('Segment position [°]')
+ylabel('Relative joint angles [°]')
 
-% Relative joint velocities.
-relJointVel = getRelativeJointVelocities(...
+% Relative joint angular velocities.
+relJointVel = getRelativeJointAngularVelocities(...
     dq1_opt,dq2_opt,dq3_opt,dq4_opt,dq5_opt);
 figure()
 plot(time,180/pi*relJointVel(1,:),...
@@ -432,26 +439,26 @@ plot(time,180/pi*relJointVel(1,:),...
      time,180/pi*relJointVel(5,:));
 legend('stance ankle','stance knee','stance hip','swing hip','swing knee');
 xlabel('Time')
-ylabel('Segment velocity [°/s]')
+ylabel('Relative joint angular velocities [°/s]')
 
 %% Maximum torque.
 max_torque=max(abs([T1_opt T2_opt T3_opt T4_opt T5_opt]));
 
-disp(['The maximum torque is ', num2str(max_torque), ' Nm. Try to make it'...
-      ' lower by playing with the weights.'])
+disp(['The maximum torque is ', num2str(max_torque), ' Nm. '...
+      'Try to make it lower by playing with the cost term weights.'])
 
-%Send Value to spreadsheet
-name=input('What is your name?','s');
-datainput{1}=name;
+% Send data to spreadsheet.
+prompt = {'Enter your name:'};
+dlgtitle = 'Input';
+dims = [1 50];
+definput = {''};
+name = inputdlg(prompt,dlgtitle,dims,definput);
+datainput{1}=name{1};
 datainput{2}=max_torque;
 datainput{3}=w1;
 datainput{4}=w2;
 datainput{5}=w3;
 datainput{6}=w4;
 datainput{7}=w5;
-mat2sheets_v2('1LkQjvf8GK8CTqohY5sC50KnL9j36aRI2fBmuBAsj-Mw', '0', [1 1], datainput);  
-  
-%% Generate an animation.
-jointPositions_opt = getJointPositions(...
-    l1,l2,l3,l4,l5,q1_opt,q2_opt,q3_opt,q4_opt,q5_opt)';
-generateAnimation(jointPositions_opt, dt, strideLength);
+mat2sheets(...
+    '1LkQjvf8GK8CTqohY5sC50KnL9j36aRI2fBmuBAsj-Mw', '0', [1 1], datainput);

@@ -1,4 +1,4 @@
-function status = mat2sheets_v2(spreadsheetID, sheetID, sheetpos, d)
+function status = mat2sheets(spreadsheetID, sheetID, sheetpos, d)
 % This function takes values from an array or cell array and places them in
 % a Google spreadsheet. It requires the one-time use of RunOnce (see below)
 % SYNTAX: status = mat2sheets(spreadsheetID, sheetID, pos, d)

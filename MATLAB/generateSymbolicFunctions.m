@@ -184,22 +184,22 @@ eq_h10 = simplify(eq_h10(3));
 eq_heelStrikeMap = [eq_h1; eq_h2; eq_h3; eq_h4; eq_h5; eq_h6; eq_h7; eq_h8; eq_h9; eq_h10];
 f_eq_heelStrikeMap = matlabFunction(eq_heelStrikeMap,'File','getHeelStrikeError.m');
 
-%% (Relative) joint positions and velocities.
-disp('Creating symbolic functions to compute (relative) joint positions and velocities...')
+%% Joint positions and velocities, and relative joint angles and angular velocities
+disp('Creating symbolic functions to compute joint positions and velocities, and relative joint angles and angular velocities...')
 jointPositions = P([4 5 7 8 10 11 13 14 16 17],:);
 jointVelocities = [dP_1(1:2); dP_2(1:2); dP_3(1:2); dP_4(1:2); dP_5(1:2)];
 
 P_fcn = matlabFunction(jointPositions,'File','getJointPositions.m');
 dP_fcn = matlabFunction(jointVelocities,'File','getJointVelocities.m');
 
-% Relative joint positions.
+% Relative joint angles.
 q_ANK = q1;
 q_stanceKNEE = q1 - q2;
 q_stanceHIP = q2 - q3;
 q_swingHIP = q4 - q3;
 q_swingKNEE = q5 - q4;
-relativeJointPositions = [q_ANK; q_stanceKNEE; q_stanceHIP; q_swingHIP; q_swingKNEE];
-Prel_fcn = matlabFunction(relativeJointPositions,'File','getRelativeJointPositions.m');
+relativeJointAngles = [q_ANK; q_stanceKNEE; q_stanceHIP; q_swingHIP; q_swingKNEE];
+Prel_fcn = matlabFunction(relativeJointAngles,'File','getRelativeJointAngles.m');
 
 % Relative joint velocities.
 dq_ANK = dq1;
@@ -207,5 +207,5 @@ dq_stanceKNEE = dq1 - dq2;
 dq_stanceHIP = dq2 - dq3;
 dq_swingHIP = dq4 - dq3;
 dq_swingKNEE = dq5 - dq4;
-relativeJointVelocities = [dq_ANK; dq_stanceKNEE; dq_stanceHIP; dq_swingHIP; dq_swingKNEE];
-dPrel_fcn = matlabFunction(relativeJointVelocities,'File','getRelativeJointVelocities.m');
+relativeJointAngularVelocities = [dq_ANK; dq_stanceKNEE; dq_stanceHIP; dq_swingHIP; dq_swingKNEE];
+dPrel_fcn = matlabFunction(relativeJointAngularVelocities,'File','getRelativeJointAngularVelocities.m');
