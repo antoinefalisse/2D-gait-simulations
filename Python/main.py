@@ -40,7 +40,7 @@ Options:
   - on_the_moon
 '''
 
-selected_gait = 'no_ankle_torque'
+selected_gait = 'nominal'
 
 # %% Model
 '''
@@ -462,3 +462,13 @@ jointPositions_opt = getJointPositions(
     l1,l2,l3,l4,l5,
     q1_opt,q2_opt,q3_opt,q4_opt,q5_opt)
 animation = generateAnimation(jointPositions_opt, dt, strideLength)
+
+
+# %% test
+import pygsheets
+gc = pygsheets.authorize(service_file='google_tokens.json')
+sh = gc.open('ISB-OptimalControl-Scores')
+#select the first sheet 
+wks = sh[0]
+name = input("Enter your name: ")
+wks.append_table(values=[name, 0, 1, 2, 3, 4, 5])
