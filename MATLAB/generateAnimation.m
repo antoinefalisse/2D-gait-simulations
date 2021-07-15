@@ -3,8 +3,8 @@ figure()
 Px1 = [zeros(size(P,1),1) P(:,[1 3 5])];
 Py1 = [zeros(size(P,1),1) P(:,[2 4 6])]; 
 
-Px2 = [P(:,[3 7 9])];
-Py2 = [P(:,[4 8 10])]; 
+Px2 = P(:,[3 7 9]);
+Py2 = P(:,[4 8 10]); 
 
 Hl=line(Px1(1,:), Py1(1,:)); hold on
 H2=line(Px2(1,:), Py2(1,:)); hold on

@@ -59,9 +59,9 @@ w5 = 1; % swing knee
 % -------------------------------------------------------------------------
 % Symbol    Value         Name
 % -------------------------------------------------------------------------
-% m1, m5    3.2 kg        mass of the tibia (lower leg)
-% m2, m4    6.8 kg        mass of the femur (upper leg)
-% m3        20 kg         mass of the torso
+% m1, m5    3.2 kg        mass of tibia (lower leg)
+% m2, m4    6.8 kg        mass of femur (upper leg)
+% m3        20 kg         mass of torso
 % -------------------------------------------------------------------------
 % I1, I5    0.93 kg-m2    rotational inertia of tibia about center of mass
 % I2, I4    1.08 kg-m2    rotational inertia of femur about center of mass
@@ -97,7 +97,7 @@ if strcmp(selected_gait, 'on_the_moon')
     g = 1.62;
 elseif strcmp(selected_gait, 'on_mars')
     g = 3.72;
-else
+else % on_earth
     g = 9.81;
 end
 
@@ -109,20 +109,20 @@ end
 % Here, we create a CasADi function that returns the 'model' constraint
 % errors based on the model states (q, dq) and controls (ddq, T). This
 % function is initialized based on the physical parameters of the model,
-% such that if you change those parameters, the equations of motion are
+% such that if you change those parameters, the equations of motion get
 % updated. During the actual optimization, we will impose the contraint
 % errors to be null. Note that you can change physical parameters of
-% the model (e.g. mass or length), but not for instance add a segment. 
-% This would make the equations of motions we generated invalid.
+% the model (e.g., mass or length), but not for instance add a segment. 
+% This would make the equations of motion we generated invalid.
 %
 % f_getModelConstraintErrors:
 % Inputs:
-%   - states: joint positions q (5x1)
-%   - states: joint velocities dq (5x1)
-%   - controls: joint accelerations ddq (5x1)
+%   - states: segment angles q (5x1)
+%   - states: segment angular velocities dq (5x1)
+%   - controls: segment angular accelerations ddq (5x1)
 %   - controls: joint torques T (5x1)
 % Outputs:
-%   - contraint errors (5x1)
+%   - model contraint errors (5x1)
 f_getModelConstraintErrors = getModelConstraintErrors(...
     m1, m2, m3, m4, m5, ...
     I1, I2, I3, I4, I5, ...
@@ -138,12 +138,12 @@ f_getModelConstraintErrors = getModelConstraintErrors(...
 % when lowering the mesh size, it suggests that your current mesh size is 
 % not low enough. It is advised to do such type of convergence analysis 
 % to make sure you do not misinterpret the results.
-strideTime = 0.8;           % Stride time (s).
-strideLength = 0.5;         % Stride length (m).
-dt = 0.01;                  % Mesh size (s).
+strideTime = 0.8;           % Stride time (s)
+strideLength = 0.5;         % Stride length (m)
+dt = 0.01;                  % Mesh size (s)
 
-N = strideTime/dt;          % Number of mesh intervals.
-time = 0:dt:strideTime;     % Discretized time vector.
+N = strideTime/dt;          % Number of mesh intervals
+time = 0:dt:strideTime;     % Discretized time vector
 
 % The NLP is formulated using Opti Stack, which is a collection of CasADi
 % helper classes that provides a close correspondence between mathematical
@@ -184,7 +184,7 @@ opti.subject_to(-pi/2 <= q5 <= pi/2);
 opti.subject_to(-pi <= q1 - q2 <= 0); % Knee joint limit (no hyperflexion).
 opti.subject_to(-pi <= q5 - q4 <= 0); % Knee joint limit (no hyperflexion).
 
-% Set naive initial guess for the segment angles.
+% Set naive initial guess for the segment angles
 % (linearly spaced vector between lower and upper bounds).
 % When no initial guess is provided, numerical zero is assumed.
 q1_init = -pi/8;    q1_final = -pi/6;   
@@ -244,14 +244,14 @@ for k=1:N
     Uk = [dq1k_plus; dq2k_plus; dq3k_plus; dq4k_plus; dq5k_plus; ...
           ddq1k; ddq2k; ddq3k; ddq4k; ddq5k];
     
-    % Implicit dynamic constraints error.
+    % Implicit dynamic constraint errors.
     % The function eulerIntegrator returns the error in the dynamics.
     % We impose this error to be null (i.e., dq - dqdt = 0; 
-    % ddq - ddqdt = 0).  The integration is performed using a backward
+    % ddq - ddqdt = 0). The integration is performed using a backward
     % Euler scheme (see eulerIntegrator.m)
     opti.subject_to(eulerIntegrator(Xk, Xk_plus, Uk, dt) == 0);
        
-    % Model constraints error.
+    % Model constraint errors.
     % We impose this error to be null (i.e., f(q, dq, ddq, T) = 0).
     modelConstraintErrors = f_getModelConstraintErrors(...
         q1k_plus,q2k_plus,q3k_plus,q4k_plus,q5k_plus,...
@@ -342,7 +342,7 @@ opti.subject_to(heelStrike_error == 0);
 % Impose gait speed.
 % "...what we have chosen here is to prescribe the duration of a single
 % step (strideTime) and then have an equality constraint on the stride
-% length (strideLength)..."
+% length (strideLength)...".
 jointPositionsEnd = getJointPositions(l1,l2,l3,l4,l5,...
     q1(:,end),q2(:,end),q3(:,end),q4(:,end),q5(:,end));
 % jointPositionsEnd(9:10,:) corresponds to the swing foot position at the

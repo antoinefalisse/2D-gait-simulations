@@ -1,16 +1,18 @@
 % This script generates several functions using MATLAB's symbolic toolbox.
 % First, a function for the equations of motion. Second, a function for 
 % the equations of the heel-strike map, and third functions to compute the
-% (relative) joint positions and velocities. This script should be run
-% before running main.m.
+% joint positions and velocities as well as relative joint angles and
+% angular velocities. This script should be run before running main.m.
+% Note that we ran this script for you already, so you should run it only
+% if you modified the model such that it requires updates.
 %
 % Author: Tom Van Wouwe
 % Contributor: Antoine Falisse and Gil Serrancoli
 
 %% Symbolic variables.
-% q1-5: joint positions (states).
-% dq1-5: joint velocities (states).
-% ddq1-5: joint accelerations (controls).
+% q1-5: segment angles (states).
+% dq1-5: segment angular velocities (states).
+% ddq1-5: segment angular accelerations (controls).
 % T1-5: joint torques (controls).
 syms q1 q2 q3 q4 q5 dq1 dq2 dq3 dq4 dq5 ddq1 ddq2 ddq3 ddq4 ddq5 T1 T2 T3 T4 T5  'real';
 % <>_plus: states after heel-strike.
@@ -113,6 +115,7 @@ f_eq_systemDynamics = matlabFunction(eq_systemDynamics,'File','getSystemDynamics
 
 %% Heel-strike map.
 disp('Deriving the heel-strike map symbolically...')
+
 % Column vectors.
 q_plus = [q1_plus; q2_plus; q3_plus; q4_plus; q5_plus]; 
 q_min = [q1_min; q2_min; q3_min; q4_min; q5_min]; 
@@ -184,8 +187,8 @@ eq_h10 = simplify(eq_h10(3));
 eq_heelStrikeMap = [eq_h1; eq_h2; eq_h3; eq_h4; eq_h5; eq_h6; eq_h7; eq_h8; eq_h9; eq_h10];
 f_eq_heelStrikeMap = matlabFunction(eq_heelStrikeMap,'File','getHeelStrikeError.m');
 
-%% Joint positions and velocities, and relative joint angles and angular velocities
-disp('Creating symbolic functions to compute joint positions and velocities, and relative joint angles and angular velocities...')
+%% Joint positions and velocities as well as relative joint angles and angular velocities
+disp('Creating symbolic functions to compute joint positions and velocities as well as relative joint angles and angular velocities...')
 jointPositions = P([4 5 7 8 10 11 13 14 16 17],:);
 jointVelocities = [dP_1(1:2); dP_2(1:2); dP_3(1:2); dP_4(1:2); dP_5(1:2)];
 

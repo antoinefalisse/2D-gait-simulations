@@ -1,5 +1,5 @@
 % This functions returns a CasADi function, which can be called when
-% solving the NLP to compute the dynamic constraints errors.
+% solving the NLP to compute the model constraint errors.
 
 function f_getModelConstraintErrors = getModelConstraintErrors(...
     m1, m2, m3, m4, m5, ...
@@ -11,15 +11,15 @@ function f_getModelConstraintErrors = getModelConstraintErrors(...
     import casadi.*
 
     % CasADi variables.
-    % Joint positions.
+    % Segment angles.
     q1_MX = MX.sym('q1_MX',1);      q2_MX = MX.sym('q2_MX',1);      
     q3_MX = MX.sym('q3_MX',1);      q4_MX = MX.sym('q4_MX',1); 
     q5_MX = MX.sym('q5_MX',1);
-    % Joint velocities.
+    % Segment angular velocities.
     dq1_MX = MX.sym('dq1_MX',1);    dq2_MX = MX.sym('dq2_MX',1);    
     dq3_MX = MX.sym('dq3_MX',1);    dq4_MX = MX.sym('dq4_MX',1); 
     dq5_MX = MX.sym('dq5_MX',1);
-    % Joint accelerations.
+    % Segment angular accelerations.
     ddq1_MX = MX.sym('ddq1_MX',1);  ddq2_MX = MX.sym('ddq2_MX',1);  
     ddq3_MX = MX.sym('ddq3_MX',1);  ddq4_MX = MX.sym('ddq4_MX',1); 
     ddq5_MX = MX.sym('ddq5_MX',1);
@@ -40,7 +40,7 @@ function f_getModelConstraintErrors = getModelConstraintErrors(...
         m1,m2,m3,m4,m5,...
         q1_MX,q2_MX,q3_MX,q4_MX,q5_MX);
     
-    % CasADi function describing implicitly the dynamic constraint errors.
+    % CasADi function describing implicitly the model constraint errors.
     % f(q, dq, ddq, T) == 0.
     f_getModelConstraintErrors = Function(...
         'f_getModelConstraintErrors',{...

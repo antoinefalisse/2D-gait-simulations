@@ -330,10 +330,9 @@ for k in range(N):
         opti.subject_to(T2k  == 0.0)
         opti.subject_to(T5k  == 0.0)    
     elif selected_gait ==  'crouch_gait':
-        opti.subject_to(jointPositions(4)<0.6) # Pelvis below 0.6 m            
+        opti.subject_to(jointPositions[3]<0.6) # Pelvis below 0.6 m            
     elif selected_gait ==  'swing_foot_circles_around_stance_foot':
-        opti.subject_to(
-            
+        opti.subject_to(            
             jointPositions[8]**2 + jointPositions[9]**2 > 0.45**2)
 # Impose gait speed.
 '''
