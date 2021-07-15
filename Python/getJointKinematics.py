@@ -2,7 +2,6 @@ import numpy as np
 
 # These functions were copied from their MATLAB counterparts.
 
-
 def getJointPositions(l1,l2,l3,l4,l5,q1,q2,q3,q4,q5):
 
     t2 = np.pi/2.0
@@ -25,8 +24,8 @@ def getJointPositions(l1,l2,l3,l4,l5,q1,q2,q3,q4,q5):
     t19 = l4*t13
     t20 = -t16
     t21 = -t19
-    jointPositions = [t14,t17,t14+t15,t17+t18,t14+t15+l3*np.cos(t5),t17+t18+l3*np.sin(t5),t14+t15+t20,t17+t18+t21,t14+t15+t20-l5*np.cos(t7),t17+t18+t21-l5*np.sin(t7)]
-    
+    jointPositions = [t14, t17, t14+t15, t17+t18, t14+t15+l3*np.cos(t5), t17+t18+l3*np.sin(t5), t14+t15+t20, t17+t18+t21, t14+t15+t20-l5*np.cos(t7), t17+t18+t21-l5*np.sin(t7)]
+
     return jointPositions
 
 def getJointVelocities(dq1,dq2,dq3,dq4,dq5,l1,l2,l3,l4,l5,q1,q2,q3,q4,q5):
@@ -52,21 +51,20 @@ def getJointVelocities(dq1,dq2,dq3,dq4,dq5,l1,l2,l3,l4,l5,q1,q2,q3,q4,q5):
     t20 = -t16
     t21 = -t17
     t22 = -t18
-    jointVelocities = [t21,t14,t21+t22,t14+t15,t21+t22-dq3*l3*np.sin(t5),t14+t15+dq3*l3*np.cos(t5),t19+t21+t22,t14+t15+t20,t19+t21+t22+dq5*l5*np.sin(t7),t14+t15+t20-dq5*l5*np.cos(t7)]
+    jointVelocities = [t21, t14, t21+t22, t14+t15, t21+t22-dq3*l3*np.sin(t5), t14+t15+dq3*l3*np.cos(t5), t19+t21+t22, t14+t15+t20, t19+t21+t22+dq5*l5*np.sin(t7), t14+t15+t20-dq5*l5*np.cos(t7)] 
 
     return jointVelocities
 
-def getRelativeJointPositions(q1,q2,q3,q4,q5):
+def getRelativeJointAngles(q1,q2,q3,q4,q5):
 
     t2 = -q3
-    relativeJointPositions = [q1,q1-q2,q2+t2,q4+t2,-q4+q5]
+    relativeJointAngles = [q1,q1-q2,q2+t2,q4+t2,-q4+q5]
     
-    return relativeJointPositions
+    return relativeJointAngles
 
-def getRelativeJointVelocities(dq1,dq2,dq3,dq4,dq5):
+def getRelativeJointAngularVelocities(dq1,dq2,dq3,dq4,dq5):
 
     t2 = -dq3
-    relativeJointVelocities = [dq1,dq1-dq2,dq2+t2,dq4+t2,-dq4+dq5]
+    relativeJointAngularVelocities = [dq1,dq1-dq2,dq2+t2,dq4+t2,-dq4+dq5]
     
-    return relativeJointVelocities
-
+    return relativeJointAngularVelocities

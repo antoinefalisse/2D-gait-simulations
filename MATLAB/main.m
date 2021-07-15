@@ -16,6 +16,12 @@ clear; close all; clc;
 
 import casadi.*
 
+%% Plot settings.
+% You might no want to generate the animation and the figures every time
+% you run the code. Feel free to adjust the variables below accordingly.
+generate_animation = true;
+generate_plots = true;
+
 %% Selection of walking pattern and weight of the cost function terms.
 % Options:
 %   - nominal
@@ -29,7 +35,6 @@ import casadi.*
 %   - swing_foot_circles_around_stance_foot
 %   - on_the_moon
 %   - on_mars
-
 selected_gait = 'nominal';
 
 % The cost function minimizes the sum of the squared joint torques. The
@@ -92,7 +97,7 @@ l3 = 0.625;
 d1 = 0.128; d5 = 0.128;
 d2 = 0.163; d4 = 0.163;
 d3 = 0.2;
-% Gravity
+% Gravity.
 if strcmp(selected_gait, 'on_the_moon')
     g = 1.62;
 elseif strcmp(selected_gait, 'on_mars')
@@ -399,47 +404,54 @@ T4_opt = sol.value(T4);
 T5_opt = sol.value(T5);
 
 %% Generate an animation.
-jointPositions_opt = getJointPositions(...
-    l1,l2,l3,l4,l5,q1_opt,q2_opt,q3_opt,q4_opt,q5_opt)';
-generateAnimation(jointPositions_opt, dt, strideLength);
+if generate_animation == true
+    jointPositions_opt = getJointPositions(...
+        l1,l2,l3,l4,l5,q1_opt,q2_opt,q3_opt,q4_opt,q5_opt)';
+    generateAnimation(jointPositions_opt, dt, strideLength);
+end
 
 %% Plots.
-% Joint torques.
-figure()
-plot(time(1:end-1),T1_opt,...
-     time(1:end-1),T2_opt,...
-     time(1:end-1),T3_opt,...
-     time(1:end-1),T4_opt,...
-     time(1:end-1),T5_opt);
-legend('stance ankle','stance knee','stance hip','swing hip','swing knee');
-xlabel('Time [s]')
-ylabel('Joint torques [Nm]')
+if generate_plots == true
+    % Joint torques.
+    figure()
+    plot(time(1:end-1),T1_opt,...
+         time(1:end-1),T2_opt,...
+         time(1:end-1),T3_opt,...
+         time(1:end-1),T4_opt,...
+         time(1:end-1),T5_opt);
+    legend('stance ankle','stance knee','stance hip','swing hip',...
+        'swing knee');
+    xlabel('Time [s]')
+    ylabel('Joint torques [Nm]')
 
-% Relative joint angles.
-relJointPos = getRelativeJointAngles(...
-    q1_opt,q2_opt,q3_opt,q4_opt,q5_opt);
-figure()
-plot(time,180/pi*relJointPos(1,:),...
-     time,180/pi*relJointPos(2,:),...
-     time,180/pi*relJointPos(3,:),...
-     time,180/pi*relJointPos(4,:),...
-     time,180/pi*relJointPos(5,:));
-legend('stance ankle','stance knee','stance hip','swing hip','swing knee');
-xlabel('Time [s]')
-ylabel('Relative joint angles [°]')
+    % Relative joint angles.
+    relJointPos = getRelativeJointAngles(...
+        q1_opt,q2_opt,q3_opt,q4_opt,q5_opt);
+    figure()
+    plot(time,180/pi*relJointPos(1,:),...
+         time,180/pi*relJointPos(2,:),...
+         time,180/pi*relJointPos(3,:),...
+         time,180/pi*relJointPos(4,:),...
+         time,180/pi*relJointPos(5,:));
+    legend('stance ankle','stance knee','stance hip','swing hip',...
+        'swing knee');
+    xlabel('Time [s]')
+    ylabel('Relative joint angles [°]')
 
-% Relative joint angular velocities.
-relJointVel = getRelativeJointAngularVelocities(...
-    dq1_opt,dq2_opt,dq3_opt,dq4_opt,dq5_opt);
-figure()
-plot(time,180/pi*relJointVel(1,:),...
-     time,180/pi*relJointVel(2,:),...
-     time,180/pi*relJointVel(3,:),...
-     time,180/pi*relJointVel(4,:),...
-     time,180/pi*relJointVel(5,:));
-legend('stance ankle','stance knee','stance hip','swing hip','swing knee');
-xlabel('Time')
-ylabel('Relative joint angular velocities [°/s]')
+    % Relative joint angular velocities.
+    relJointVel = getRelativeJointAngularVelocities(...
+        dq1_opt,dq2_opt,dq3_opt,dq4_opt,dq5_opt);
+    figure()
+    plot(time,180/pi*relJointVel(1,:),...
+         time,180/pi*relJointVel(2,:),...
+         time,180/pi*relJointVel(3,:),...
+         time,180/pi*relJointVel(4,:),...
+         time,180/pi*relJointVel(5,:));
+    legend('stance ankle','stance knee','stance hip','swing hip',...
+        'swing knee');
+    xlabel('Time')
+    ylabel('Relative joint angular velocities [°/s]')
+end
 
 %% Maximum torque.
 max_torque=max(abs([T1_opt T2_opt T3_opt T4_opt T5_opt]));
@@ -447,18 +459,30 @@ max_torque=max(abs([T1_opt T2_opt T3_opt T4_opt T5_opt]));
 disp(['The maximum torque is ', num2str(max_torque), ' Nm. '...
       'Try to make it lower by playing with the cost term weights.'])
 
-% Send data to spreadsheet.
-prompt = {'Enter your name:'};
-dlgtitle = 'Input';
-dims = [1 50];
-definput = {''};
-name = inputdlg(prompt,dlgtitle,dims,definput);
-datainput{1}=name{1};
-datainput{2}=max_torque;
-datainput{3}=w1;
-datainput{4}=w2;
-datainput{5}=w3;
-datainput{6}=w4;
-datainput{7}=w5;
-mat2sheets(...
-    '1LkQjvf8GK8CTqohY5sC50KnL9j36aRI2fBmuBAsj-Mw', '0', [1 1], datainput);
+%% Challenge.
+% Try to minimize the maximum torque by adjusting the weight of the cost
+% terms (i.e., w1, w2, w3, w4, w5). You can adjust them at the top of the
+% script (lines 46-50).
+% 
+% If you would like to participate in our challenge, set the variable 
+% challenge below to True. You will get prompted to enter your name, and
+% your name, score, and weight combination will be saved in a google
+% spreadsheet so that we can identify the best combination and winner.
+challenge = false;
+
+if challenge == true
+    prompt = {'Enter your name:'};
+    dlgtitle = 'Input';
+    dims = [1 50];
+    definput = {''};
+    name = inputdlg(prompt,dlgtitle,dims,definput);
+    datainput{1}=name{1};
+    datainput{2}=max_torque;
+    datainput{3}=w1;
+    datainput{4}=w2;
+    datainput{5}=w3;
+    datainput{6}=w4;
+    datainput{7}=w5;
+    mat2sheets('1LkQjvf8GK8CTqohY5sC50KnL9j36aRI2fBmuBAsj-Mw', '0', ...
+        [1 1], datainput);
+end

@@ -33,13 +33,11 @@ def generateAnimation(jointPositions_opt, dt, strideLength, nCycles=7):
         Px1 = np.concatenate((Px1, Px1_t + nCycle*strideLength), axis=0)
         Px2 = np.concatenate((Px2, Px2_t + nCycle*strideLength), axis=0)
         Py1 = np.concatenate((Py1, Py1), axis=0)
-        Py2 = np.concatenate((Py2, Py2), axis=0)    
-    
+        Py2 = np.concatenate((Py2, Py2), axis=0)        
     
     fig = plt.figure()
     ax = fig.add_subplot(111, autoscale_on=False, 
                          xlim=(-0.6, 3.6), ylim=(-0.1, 1.7))
-    # ax.grid()
     
     line, = ax.plot([], [], 'o-', lw=2, color='blue')
     line2, = ax.plot([], [], 'o-', lw=2, color='blue')
