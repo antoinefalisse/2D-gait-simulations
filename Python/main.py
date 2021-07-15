@@ -556,7 +556,7 @@ print('The maximum torque is {} Nm. Try to make it lower by playing with the\
     your name, score, and weight combination will be saved in a google
     spreadsheet so that we can identify the best combination and winner.
 '''
-challenge = True
+challenge = False
 # Send data to spreadsheet.
 if challenge:
     gc = pygsheets.authorize(service_file='google_tokens.json')
