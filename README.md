@@ -11,7 +11,7 @@ The predictive simulation will be formulated as a trajectory optimization proble
 
 We have set up a challenge for those who are interested: "Find the cost function that minimizes the maximum peak torque". We will provide you with more information about the cahllenge during the workshop.
 
-The example is available in MATLAB and Python, so feel free to select whatever tool you prefer. You will find the install requirements as well as more info in the READMEs of both folders.
+The example is available in MATLAB and Python, so feel free to select whatever tool you prefer. You will find the install requirements as well as more info in the READMEs in the MATLAB and Python folders.
 
 The problem should solve in only a couple of seconds on a standard laptop computer, which is great for testing the effect of different parameters and modeling choices on the predicted gait pattern.
 
