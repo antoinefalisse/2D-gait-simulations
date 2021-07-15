@@ -466,8 +466,8 @@ animation = generateAnimation(jointPositions_opt, dt, strideLength)
 
 # %% test
 import pygsheets
-gc = pygsheets.authorize(service_file='matlabocp-70b419a5fd68.json')
-sh = gc.open('Scores')
+gc = pygsheets.authorize(service_file='google_tokens.json')
+sh = gc.open('ISB-OptimalControl-Scores')
 #select the first sheet 
 wks = sh[0]
 name = input("Enter your name: ")
