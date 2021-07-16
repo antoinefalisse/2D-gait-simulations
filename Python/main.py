@@ -31,7 +31,7 @@ from generateAnimation import generateAnimation
 
 # %% Plot settings.
 '''
-You might no want to generate the animation and the figures every single time
+You might no want to generate the animation and figures every single time
 you run the code. Feel free to adjust the variables below accordingly.
 '''
 generate_animation = True
@@ -380,8 +380,8 @@ for k in range(N):
 on one foot to single stance on the other: as soon as the leading foot 
 strikes the ground, the trailing foot leaves the ground. This transition
 is known as a heel-strike map...There are two parts to the heel-strike
-map. The first is an impulsive collision, which changes the joint 
-velocities throughout the model, but does not affect the joint positions.
+map. The first is an impulsive collision, which changes the segment angular 
+velocities throughout the model, but does not affect the segment angles.
 The second part of the map swaps the swing and stance legs. The leg swap
 is done to enforce a symmetry in the solution: we want the step taken by
 the left leg to be identical to that for the right, and for both to be

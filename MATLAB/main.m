@@ -317,8 +317,9 @@ end
 % on one foot to single stance on the other: as soon as the leading foot 
 % strikes the ground, the trailing foot leaves the ground. This transition
 % is known as a heel-strike map...There are two parts to the heel-strike
-% map. The first is an impulsive collision, which changes the joint 
-% velocities throughout the model, but does not affect the joint positions.
+% map. The first is an impulsive collision, which changes the segment 
+% angular velocities throughout the model, but does not affect the segment
+% angles.
 % The second part of the map swaps the swing and stance legs. The leg swap
 % is done to enforce a symmetry in the solution: we want the step taken by
 % the left leg to be identical to that for the right, and for both to be
@@ -465,7 +466,7 @@ disp(['The maximum torque is ', num2str(max_torque), ' Nm. '...
 % script (lines 46-50).
 % 
 % If you would like to participate in our challenge, set the variable 
-% challenge below to True. You will get prompted to enter your name, and
+% challenge below to true. You will get prompted to enter your name, and
 % your name, score, and weight combination will be saved in a google
 % spreadsheet so that we can identify the best combination and winner.
 challenge = false;
