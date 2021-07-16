@@ -4,12 +4,14 @@ Python version of the example.
 # Install requirements:
 - Install [Anaconda](https://docs.anaconda.com/anaconda/install/).
 - Open an anaconda prompt.
-- (Optional depending on your conda environment) Install `pip` in your conda environment: `conda install pip`.
+- (Recommended) Create a specific conda environment for the workshop: `conda create -n isb2021 python pip spyder`
+	- Activate the environment: `conda activate isb2021` 
 - Navigate to the Python folder of ISB21-workshop: `cd <my_directory>/ISB21-workshop/Python` where `<my_directory>` is the path to the folder where `ISB21-workshop` is located.
 - Install the required packages: `python -m pip install -r requirements.txt`.
 
 # Run the code:
 - Open an anaconda prompt.
+- (Depending on your installlation, see above) Activate the environment: `conda activate isb2021`
 - Navigate to the Python folder of ISB21-workshop: `cd <my_directory>/ISB21-workshop/Python` where `<my_directory>` is the path to the folder where `ISB21-workshop` is located.
     - Option 1: You can run the code using the following command line: `python main.py`. Note that you need to close the figures to get the script to keep running.
     - Option 2: You can run the code in your favorite IDE such as spyder. To launch spyder from the command line, type `spyder` in the anaconda prompt. You can then run `main.py`.

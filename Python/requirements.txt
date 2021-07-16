@@ -1,6 +1,6 @@
 numpy
 matplotlib
 casadi
-spyder
 pygsheets
 ipython
+notebook

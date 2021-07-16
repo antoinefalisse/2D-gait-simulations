@@ -542,8 +542,8 @@ if generate_plots:
 # %% Maximum torque.
 max_torque=np.max(np.abs(np.array([T1_opt, T2_opt, T3_opt, T4_opt, T5_opt])))
 
-print('The maximum torque is {} Nm. Try to make it lower by playing with the\
-        cost term weights.'.format(max_torque))
+print('The maximum torque is {} Nm. Try to make it lower by playing with the \
+cost term weights.'.format(max_torque))
     
 # %% Challenge.
 '''
